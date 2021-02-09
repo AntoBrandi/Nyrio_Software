@@ -1,0 +1,15 @@
+<launch>
+  
+    <!-- Launch the gazebo simulation -->
+    <include file="$(find niryo_gazebo)/launch/gazebo.launch"/>
+  
+    <!-- Launch the sim controllers -->
+    <include file="$(find niryo_sim_controller)/launch/sim_controller.launch"/>
+  
+    <!-- Launch moveit move_group -->
+    <include file="$(find niryo_moveit)/launch/move_group.launch"/>
+  
+    <!-- Launch moveit rviz gui -->
+    <include file="$(find niryo_moveit)/launch/moveit_rviz.launch"/>
+  
+  </launch>

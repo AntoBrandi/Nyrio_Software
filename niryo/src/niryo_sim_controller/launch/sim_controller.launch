@@ -1,0 +1,19 @@
+<launch>
+
+    <!-- Load joint controller configurations from YAML file to parameter server -->
+    <rosparam file="$(find niryo_sim_controller)/config/trajectory_controllers.yaml" command="load"/>
+
+    <!-- Load joint controller configurations from YAML file to parameter server -->
+    <rosparam file="$(find niryo_sim_controller)/config/joint_state_controller.yaml" command="load"/>
+
+    <node name="joint_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/niryo" args="joint_state_controller" />
+
+    <!-- load the controllers -->
+    <node name="trajectory_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/niryo" args="arm_controller"/>
+
+    <!-- convert joint states to TF transforms for rviz, etc -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+        <remap from="/joint_states" to="/niryo/joint_states" />
+    </node>
+
+</launch>
