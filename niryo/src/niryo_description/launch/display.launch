@@ -1,0 +1,13 @@
+<launch>
+    <arg name="hardware_version" default="2" /> 
+	
+    <arg name="urdf_file" default="$(find xacro)/xacro --inorder '$(find niryo_description)/urdf/v2/niryo_one.urdf.xacro'"/>
+	<arg name="gui" default="true" />
+
+	<param name="robot_description" command="$(arg urdf_file)" />
+	<param name="use_gui" value="$(arg gui)" />
+
+	<node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find niryo_description)/config/default_config.rviz" />
+</launch>

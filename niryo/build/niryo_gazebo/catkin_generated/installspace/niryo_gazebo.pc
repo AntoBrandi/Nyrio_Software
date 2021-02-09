@@ -1,0 +1,8 @@
+prefix=/home/omncbar/Nyrio_Software/niryo/install
+
+Name: niryo_gazebo
+Description: Description of niryo_gazebo
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
