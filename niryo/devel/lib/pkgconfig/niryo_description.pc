@@ -1,8 +1,0 @@
-prefix=/home/omncbar/Nyrio_Software/niryo/devel
-
-Name: niryo_description
-Description: Description of niryo_description
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
