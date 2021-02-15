@@ -4,7 +4,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_one">
 
     <!-- Macros -->
-    <xacro:macro name="default_transmission" params="number">
+    <xacro:macro name="default_transmission" params="number reduction">
         <transmission name="transmission_${number}">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="joint_${number}">
@@ -12,7 +12,7 @@
             </joint>
             <actuator name="motor_${number}">
                 <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-                <mechanicalReduction>1</mechanicalReduction>
+                <mechanicalReduction>${reduction}</mechanicalReduction>
             </actuator>
         </transmission>
     </xacro:macro>
@@ -22,12 +22,12 @@
     <xacro:include filename="$(find niryo_description)/urdf/v2/niryo_one.urdf.xacro" />
 
     <!-- Transmissions-->
-    <xacro:default_transmission number="1"/>
-    <xacro:default_transmission number="2"/>
-    <xacro:default_transmission number="3"/>
-    <xacro:default_transmission number="4"/>
-    <xacro:default_transmission number="5"/>
-    <xacro:default_transmission number="6"/>
+    <xacro:default_transmission number="1" reduction="1"/>
+    <xacro:default_transmission number="2" reduction="1"/>
+    <xacro:default_transmission number="3" reduction="1"/>
+    <xacro:default_transmission number="4" reduction="1"/>
+    <xacro:default_transmission number="5" reduction="1"/>
+    <xacro:default_transmission number="6" reduction="1"/>
 
     <!-- gazebo ros_control plugin -->
     <gazebo>

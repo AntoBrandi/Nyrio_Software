@@ -1,10 +1,10 @@
-rostopic pub /niryo/stepper_actuate std_msgs/UInt16MultiArray "layout:
+rostopic pub /niryo/servo_actuate std_msgs/UInt16MultiArray "layout:
   dim:
   - label: ''
     size: 3
     stride: 0
   data_offset: 0
 data:
-- 900
-- 300
+- 0
+- 1000
 - 0" 

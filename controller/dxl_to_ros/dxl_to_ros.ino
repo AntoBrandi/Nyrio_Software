@@ -1,6 +1,8 @@
 #include <ros.h>
-#include <std_msgs/UInt16MultiArray.h>
+#include <std_msgs/Int16MultiArray.h>
+#include <std_msgs/Byte.h>
 #include <DynamixelSDK.h>
+
 
 // Control table address (XL320)
 #define ADDR_PRO_TORQUE_ENABLE          24         
@@ -46,10 +48,15 @@ int16_t dxl_III_present_position = 0;
 
 ros::NodeHandle nh;
 
-void servo_actuate_cb( const std_msgs::UInt16MultiArray& msg);
+void servo_actuate_cb( const std_msgs::Int16MultiArray& msg);
+void servo_disable_output_cb( const std_msgs::Byte& msg);
+void servo_enable_output_cb( const std_msgs::Byte& msg);
 
-ros::Subscriber<std_msgs::UInt16MultiArray> sub_arm("niryo/servo_actuate", &servo_actuate_cb );
-std_msgs::UInt16MultiArray states_msg;
+ros::Subscriber<std_msgs::Int16MultiArray> sub_arm("niryo/servo_actuate", &servo_actuate_cb );
+ros::Subscriber<std_msgs::Byte> sub_disable_output("niryo/servo_disable_output", &servo_disable_output_cb);
+ros::Subscriber<std_msgs::Byte> sub_enable_output("niryo/servo_enable_output", &servo_enable_output_cb);
+
+std_msgs::Int16MultiArray states_msg;
 ros::Publisher pub_states("niryo/servo_states", &states_msg);
 
 
@@ -57,8 +64,6 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   while(!Serial);
-
-  Serial.println("Start..");
 
   // Initialize PortHandler instance
   portHandler = dynamixel::PortHandler::getPortHandler(DEVICENAME);
@@ -74,7 +79,6 @@ void setup() {
   else
   {
     Serial.print("Failed to open the port!\n");
-    Serial.print("Press any key to terminate...\n");
     return;
   }
 
@@ -86,7 +90,6 @@ void setup() {
   else
   {
     Serial.print("Failed to change the baudrate!\n");
-    Serial.print("Press any key to terminate...\n");
     return;
   }
 
@@ -117,17 +120,19 @@ void setup() {
   nh.initNode();
 
   // Init and Create the response message that will be published later
-  states_msg.layout.dim = (std_msgs::MultiArrayDimension *);
-  malloc(sizeof(std_msgs::MultiArrayDimension)*2)
+  states_msg.layout.dim = (std_msgs::MultiArrayDimension *)
+  malloc(sizeof(std_msgs::MultiArrayDimension)*2);
   states_msg.layout.dim[0].label = "height";
   states_msg.layout.dim[0].size = 4;
   states_msg.layout.dim[0].stride = 1;
   states_msg.layout.data_offset = 0;
-  states_msg.data = (uint16_t *)malloc(sizeof(int)*8);
+  states_msg.data = (int16_t *)malloc(sizeof(int)*8);
   states_msg.data_length = 3;
   
   // Inform ROS that this node will subscribe to messages on a given topic
   nh.subscribe(sub_arm);
+  nh.subscribe(sub_disable_output);
+  nh.subscribe(sub_enable_output);
   nh.advertise(pub_states);
 }
 
@@ -210,8 +215,22 @@ void loop() {
   nh.spinOnce();
 }
 
-void servo_actuate_cb( const std_msgs::UInt16MultiArray& msg){
+void servo_actuate_cb( const std_msgs::Int16MultiArray& msg){
   dxl_I_goal_position = (int)msg.data[0];
   dxl_II_goal_position = (int)msg.data[1];
   dxl_III_goal_position = (int)msg.data[2];
+}
+
+void servo_enable_output_cb( const std_msgs::Byte& msg)
+{
+  dxl_I_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_I, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_I_error);
+  dxl_II_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_II, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_II_error);
+  dxl_III_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_III, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_III_error);
+}
+
+void servo_disable_output_cb( const std_msgs::Byte& msg)
+{
+  dxl_I_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_I, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_I_error);
+  dxl_II_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_II, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_II_error);
+  dxl_III_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_III, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_III_error);
 }
