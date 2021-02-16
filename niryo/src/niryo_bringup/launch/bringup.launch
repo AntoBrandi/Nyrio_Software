@@ -1,4 +1,15 @@
 <launch>
+    
+    <arg name="model" default="$(find niryo_gazebo)/urdf/v2/niryo_one_gazebo.urdf.xacro"/>  
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
   
+    <!-- Launch the controllers -->
+    <include file="$(find niryo_controller)/launch/controller.launch"/>
+  
+    <!-- Launch moveit move_group -->
+    <include file="$(find niryo_moveit)/launch/move_group.launch"/>
+  
+    <!-- Launch moveit rviz gui -->
+    <include file="$(find niryo_moveit)/launch/moveit_rviz.launch"/>
   
 </launch>

@@ -1,0 +1,11 @@
+<launch>
+
+    <!-- Launch the angles converter service -->
+    <node pkg="niryo_controller" type="angles_converter.py" name="angles_converter" respawn="true" output="screen"/>
+
+    <!-- Launch the controller_interface node that converts joint state messages in Arduino readable messages -->
+    <group ns="niryo/arm_controller">
+        <node pkg="niryo_controller" type="arm_trajectory_controller.py" name="follow_joint_trajectory" respawn="true" output="screen"/>
+    </group>
+
+</launch>
