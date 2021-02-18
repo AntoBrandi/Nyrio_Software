@@ -4,7 +4,7 @@ import actionlib
 import control_msgs.msg
 import math
 from std_msgs.msg import Int16MultiArray, Float64MultiArray
-from sensor_msg.msg import JointState
+from sensor_msgs.msg import JointState
 from niryo_controller.srv import AnglesConverter
 
 
@@ -13,6 +13,9 @@ JOINT_NAMES = ['joint_1', 'joint_2', 'joint_3','joint_4', 'joint_5', 'joint_6']
 
 # constant that defines the start pose of the robot
 START_POSE = [0.0,0.0,0.0,0.0,0.0,0.0]
+
+# current pose of the robot
+CURRENT_POSE = [0.0,0.0,0.0,0.0,0.0,0.0]
 
 
 class TrajectoryControllerAction(object):
@@ -29,8 +32,8 @@ class TrajectoryControllerAction(object):
         self._action_name = name
         self._as = actionlib.SimpleActionServer(self._action_name, control_msgs.msg.FollowJointTrajectoryAction, execute_cb=self.goal_cb, auto_start = False)
         self._as.start()
-        self.old_joint_angles = START_POSE
-        self.execute(self.old_joint_angles)
+        self.execute(START_POSE)
+
       
     def goal_cb(self, goal):
         # This function is called when the action server receives a new goal
@@ -84,6 +87,7 @@ class TrajectoryControllerAction(object):
 
         pub_stepper.publish(data=[angles_step.joint_1, angles_step.joint_2, angles_step.joint_3])
         pub_servo.publish(data=[angles_step.joint_4, angles_step.joint_5, angles_step.joint_6])
+        CURRENT_POSE = angles     
         
 
 if __name__ == '__main__':
@@ -92,13 +96,23 @@ if __name__ == '__main__':
 
     pub_stepper = rospy.Publisher('/niryo/stepper_actuate', Int16MultiArray, queue_size=10)
     pub_servo = rospy.Publisher('/niryo/servo_actuate', Int16MultiArray, queue_size=10)
-    pub_status = rospy.Publisher('niryo/joint_states', JointState, queue_size=10)
+    pub_status = rospy.Publisher('/niryo/joint_states', JointState, queue_size=10)
 
     rospy.wait_for_service('/radians_to_steps')
 
     # Init the FollowJointTrajectory action server that will receive a trajectory for each joint and will
     # execute it in the real robot
     server = TrajectoryControllerAction(rospy.get_name())
+
+    rate = rospy.Rate(10) # 10hz
+    status = JointState()
+    status.name = JOINT_NAMES
+
+    while not rospy.is_shutdown():  
+        status.header.stamp = rospy.Time.now()
+        status.position = CURRENT_POSE
+        pub_status.publish(status)
+        rate.sleep()
 
     # keep this ROS node up and running
     rospy.spin()
