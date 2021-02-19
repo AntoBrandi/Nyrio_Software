@@ -37,14 +37,14 @@
 	<xacro:property name="PI" value="3.14159265359" />
 
     <!-- Joint 1 - Rotation Limit -->
-    <xacro:property name="limit_low_shoulder_rotation" value="-3.05433" />
-    <xacro:property name="limit_up_shoulder_rotation" value="3.05433" />
+    <xacro:property name="limit_low_shoulder_rotation" value="-${PI}" />
+    <xacro:property name="limit_up_shoulder_rotation" value="${PI}" />
     <!-- Joint 2 - Rotation Limit -->
-    <xacro:property name="limit_low_arm_rotation" value="-1.57080" />
-    <xacro:property name="limit_up_arm_rotation" value="0.640187" />
+    <xacro:property name="limit_low_arm_rotation" value="-2.355" />
+    <xacro:property name="limit_up_arm_rotation" value="0.628" />
     <!-- Joint 3 - Rotation Limit -->
-    <xacro:property name="limit_low_elbow_rotation" value="-1.397485" />
-    <xacro:property name="limit_up_elbow_rotation" value="${PI/2}" />
+    <xacro:property name="limit_low_elbow_rotation" value="-1.256" />
+    <xacro:property name="limit_up_elbow_rotation" value="1.9625" />
     <!-- Joint 4 - Rotation Limit -->
     <xacro:property name="limit_low_forearm_rotation" value="-3.05433" />
     <xacro:property name="limit_up_forearm_rotation" value="3.05433" />

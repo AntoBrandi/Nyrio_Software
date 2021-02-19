@@ -85,8 +85,8 @@ class TrajectoryControllerAction(object):
         angles_step = radians_to_steps(angles[0],angles[1],angles[2],angles[3],angles[4],angles[5])
         rospy.loginfo('Angles Steps : %s' % str([angles_step.joint_1,angles_step.joint_2,angles_step.joint_3,angles_step.joint_4,angles_step.joint_5,angles_step.joint_6]))
 
-        pub_stepper.publish(data=[angles_step.joint_1, angles_step.joint_2, angles_step.joint_3])
-        pub_servo.publish(data=[angles_step.joint_4, angles_step.joint_5, angles_step.joint_6])
+        pub_stepper.publish(data=[int(angles_step.joint_1), int(angles_step.joint_2), int(angles_step.joint_3)])
+        pub_servo.publish(data=[int(angles_step.joint_4), int(angles_step.joint_5), int(angles_step.joint_6)])
         CURRENT_POSE = angles     
         
 
