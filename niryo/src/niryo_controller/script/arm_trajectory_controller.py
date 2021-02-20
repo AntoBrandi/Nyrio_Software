@@ -16,6 +16,8 @@ START_POSE = [0.0,0.0,0.0,0.0,0.0,0.0]
 
 # current pose of the robot
 CURRENT_POSE = [0.0,0.0,0.0,0.0,0.0,0.0]
+CURRENT_STEP = [0,0,0]
+CURRENT_SERVO = [0,0,0]
 
 
 class TrajectoryControllerAction(object):
@@ -78,16 +80,20 @@ class TrajectoryControllerAction(object):
         
 
     def execute(self, angles):
+        global CURRENT_STEP, CURRENT_SERVO, CURRENT_POSE
         # This function publishes the target pose on the robot on the matching topic
         rospy.loginfo('Angles Radians : %s' % str(angles))
         # The trajectory controller is moving a real robot controlled by Arduino
         radians_to_steps = rospy.ServiceProxy('/radians_to_steps', AnglesConverter)
         angles_step = radians_to_steps(angles[0],angles[1],angles[2],angles[3],angles[4],angles[5])
-        rospy.loginfo('Angles Steps : %s' % str([angles_step.joint_1,angles_step.joint_2,angles_step.joint_3,angles_step.joint_4,angles_step.joint_5,angles_step.joint_6]))
-
-        pub_stepper.publish(data=[int(angles_step.joint_1), int(angles_step.joint_2), int(angles_step.joint_3)])
-        pub_servo.publish(data=[int(angles_step.joint_4), int(angles_step.joint_5), int(angles_step.joint_6)])
+        
+        CURRENT_STEP = [int(angles_step.joint_1), int(angles_step.joint_2), int(angles_step.joint_3)]
+        CURRENT_SERVO = [int(angles_step.joint_4), int(angles_step.joint_5), int(angles_step.joint_6)]
         CURRENT_POSE = angles     
+
+        rospy.loginfo('Angles Steps : %s' % str([CURRENT_STEP[0],CURRENT_STEP[1],CURRENT_STEP[2]]))
+        rospy.loginfo('Angles Servo : %s' % str([CURRENT_SERVO[0],CURRENT_SERVO[1],CURRENT_SERVO[2]]))
+
         
 
 if __name__ == '__main__':
@@ -111,6 +117,8 @@ if __name__ == '__main__':
     while not rospy.is_shutdown():  
         status.header.stamp = rospy.Time.now()
         status.position = CURRENT_POSE
+        pub_stepper.publish(data=CURRENT_STEP)
+        pub_servo.publish(data=CURRENT_SERVO)
         pub_status.publish(status)
         rate.sleep()
 

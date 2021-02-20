@@ -107,10 +107,10 @@ void setup() {
     {
       packetHandler->getTxRxResult(dxl_II_comm_result);
     }
-//    if (dxl_III_comm_result != COMM_SUCCESS)
-//    {
-//      packetHandler->getTxRxResult(dxl_III_comm_result);
-//    }
+    if (dxl_III_comm_result != COMM_SUCCESS)
+    {
+      packetHandler->getTxRxResult(dxl_III_comm_result);
+    }
   }
   else
   {
@@ -160,15 +160,15 @@ void loop() {
   }
 
   
-//  dxl_III_comm_result = packetHandler->write2ByteTxRx(portHandler, DXL_III, ADDR_PRO_GOAL_POSITION, dxl_III_goal_position, &dxl_III_error);
-//  if (dxl_III_comm_result != COMM_SUCCESS)
-//  {
-//    packetHandler->getTxRxResult(dxl_III_comm_result);
-//  }
-//  else if (dxl_III_error != 0)
-//  {
-//    packetHandler->getRxPacketError(dxl_III_error);
-//  }
+  dxl_III_comm_result = packetHandler->write2ByteTxRx(portHandler, DXL_III, ADDR_PRO_GOAL_POSITION, dxl_III_goal_position, &dxl_III_error);
+  if (dxl_III_comm_result != COMM_SUCCESS)
+  {
+    packetHandler->getTxRxResult(dxl_III_comm_result);
+  }
+  else if (dxl_III_error != 0)
+  {
+    packetHandler->getRxPacketError(dxl_III_error);
+  }
 
   
   // read the current status 
@@ -194,20 +194,20 @@ void loop() {
   }
 
 
-//  dxl_III_comm_result = packetHandler->read2ByteTxRx(portHandler, DXL_III, ADDR_PRO_PRESENT_POSITION, (uint16_t*)&dxl_III_present_position, &dxl_III_error);
-//  if (dxl_III_comm_result != COMM_SUCCESS)
-//  {
-//    packetHandler->getTxRxResult(dxl_III_comm_result);
-//  }
-//  else if (dxl_III_error != 0)
-//  {
-//    packetHandler->getRxPacketError(dxl_III_error);
-//  }
+  dxl_III_comm_result = packetHandler->read2ByteTxRx(portHandler, DXL_III, ADDR_PRO_PRESENT_POSITION, (uint16_t*)&dxl_III_present_position, &dxl_III_error);
+  if (dxl_III_comm_result != COMM_SUCCESS)
+  {
+    packetHandler->getTxRxResult(dxl_III_comm_result);
+  }
+  else if (dxl_III_error != 0)
+  {
+    packetHandler->getRxPacketError(dxl_III_error);
+  }
 
 
   states_msg.data[0] = dxl_I_present_position;
   states_msg.data[1] = dxl_II_present_position;
-//  states_msg.data[2] = dxl_III_present_position;
+  states_msg.data[2] = dxl_III_present_position;
     
   pub_states.publish( &states_msg );
 

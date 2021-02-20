@@ -1,0 +1,95 @@
+#!/usr/bin/env python
+import sys
+import copy
+import rospy
+import moveit_commander
+import moveit_msgs.msg
+import geometry_msgs.msg
+from math import pi
+from std_msgs.msg import String
+from moveit_commander.conversions import pose_to_list
+
+
+# define the robot group names created with the MoveIt! Setup Assistant
+ARM_GROUP_NAME = 'arm'
+
+class MoveitInterface(object):
+
+    def __init__(self):
+        super(MoveitInterface, self).__init__()
+        
+        # Constructor that gets called when a new instance of this class is created
+        # it basically inizialize the MoveIt! API that will be used throughout the script
+        # initialize the ROS interface with the robot via moveit
+        moveit_commander.roscpp_initialize(sys.argv)
+
+        # create a robot commander object that will be the interface with the robot
+        self.robot = moveit_commander.RobotCommander()
+
+        # create a move group commander object that will be the interface with the robot joints
+        self.arm_move_group = moveit_commander.MoveGroupCommander(ARM_GROUP_NAME)
+
+        # create a move group commander object for the gripper
+        self.gripper_move_group = moveit_commander.MoveGroupCommander(GRIPPER_GROUP_NAME)
+
+        # create a display trajectory object that will publish the trajectory to rviz
+        self.display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
+                                                    moveit_msgs.msg.DisplayTrajectory,
+                                                    queue_size=20)
+                                                    
+
+    def get_robot_info(self):
+        # Function that prints the robot informations obtained via
+        # MoveIt! APIs
+        # We can get the name of the reference frame for this robot:
+        planning_frame = self.arm_move_group.get_planning_frame()
+        print "============ Planning frame: %s" % planning_frame
+
+        # We can also print the name of the end-effector link for this group:
+        eef_link = self.arm_move_group.get_end_effector_link()
+        print "============ End effector link: %s" % eef_link
+
+        # We can get a list of all the groups in the robot:
+        group_names = self.robot.get_group_names()
+        print "============ Available Planning Groups:", group_names
+
+        # Sometimes for debugging it is useful to print the entire state of the robot:
+        print "============ Printing robot state"
+        print self.robot.get_current_state()
+        print ""
+
+    
+    def reach_goal(self, goal):
+        # This function requires a JointState message as input 
+        # with a list of 5 angles in radians for each joint
+        # The first 3 elemnt of this list are passed to the arm group 
+        # and the last 2 elements are passed to the gripper group.
+        # Consider that the last two element of this list have to be the same 
+        # as absolute value and with opposite sign
+        arm_goal = goal.position[:-2]
+        gripper_goal = goal.position[-2:]
+
+        # Plan and Execute a trajectory that brings the robot from the current pose
+        # to the target pose
+        self.arm_move_group.go(arm_goal, wait=True)
+        self.gripper_move_group.go(gripper_goal, wait=True)
+
+        # Make sure that no residual movement remains
+        self.arm_move_group.stop()
+        self.gripper_move_group.stop()
+
+    
+    def set_max_velocity(self, scaling_factor):
+        # This function sets the the max velocity of the ARM and GRIPPER move group as percentage
+        # of the max speed of the joint defined in the joint_linits.yaml file
+        # it requires a float number as input >= 0 and <= 1
+        self.arm_move_group.set_max_velocity_scaling_factor(scaling_factor)
+        self.gripper_move_group.set_max_velocity_scaling_factor(scaling_factor)
+
+    def set_max_acceleration(self, scaling_factor):
+        # This function sets the the max acceleration of the ARM and GRIPPER move group as percentage
+        # of the max speed of the joint defined in the joint_linits.yaml file
+        # it requires a float number as input >= 0 and <= 1
+        self.arm_move_group.set_max_acceleration_scaling_factor(scaling_factor)
+        self.gripper_move_group.set_max_acceleration_scaling_factor(scaling_factor)
+

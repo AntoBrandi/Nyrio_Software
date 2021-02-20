@@ -22,7 +22,6 @@
 
   <arg name="capabilities" default=""/>
   <arg name="disable_capabilities" default=""/>
-  <arg name="states_topic" default="niryo" />
   <!-- load these non-default MoveGroup capabilities (space seperated) -->
   <!--
   <arg name="capabilities" value="
@@ -74,7 +73,7 @@
     <param name="planning_scene_monitor/publish_state_updates" value="$(arg publish_monitored_planning_scene)" />
     <param name="planning_scene_monitor/publish_transforms_updates" value="$(arg publish_monitored_planning_scene)" />
 
-    <remap from="/joint_states" to="/$(arg states_topic)/joint_states" />
+    <remap from="/joint_states" to="/niryo/joint_states" />
   </node>
 
 </launch>
