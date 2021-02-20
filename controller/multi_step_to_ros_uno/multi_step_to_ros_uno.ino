@@ -22,8 +22,8 @@ AccelStepper stepper_III(motorInterfaceType, 4, 7);
 MultiStepper steppers; 
 
 long stepper_goals [] = {0,0,0};
-int max_speed = 500;
-int max_acceleration = 1000;
+int max_speed = 400;
+int max_acceleration = 100;
 
 void setup()
 {

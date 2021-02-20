@@ -59,7 +59,7 @@ class TrajectoryControllerAction(object):
                 break
 
             # wait before starting the execution of the next goal
-            delay = point.time_from_start - goal.trajectory.points[i-1].time_from_start if i>0 else 0
+            delay = (point.time_from_start - goal.trajectory.points[i-1].time_from_start)/8 if i>0 else 0
             rospy.sleep(delay)
 
             # reach the current loop pose
