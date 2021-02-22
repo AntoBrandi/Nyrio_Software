@@ -77,3 +77,58 @@ class MoveitInterface(object):
         # it requires a float number as input >= 0 and <= 1
         self.group.set_max_acceleration_scaling_factor(scaling_factor)
 
+
+    def plan_cartesian_path(self, points):
+
+        waypoints = []
+
+        for point in points:
+            wpose = self.group.get_current_pose().pose
+            wpose.position.x += point.position.x
+            wpose.position.y += point.position.y  
+            wpose.position.z += point.position.z
+            waypoints.append(copy.deepcopy(wpose))
+
+        # We want the Cartesian path to be interpolated at a resolution of 1 cm
+        # which is why we will specify 0.01 as the eef_step in Cartesian
+        # translation.  We will disable the jump threshold by setting it to 0.0 disabling:
+        (plan, fraction) = self.group.compute_cartesian_path(
+                                        waypoints,   # waypoints to follow
+                                        0.01,        # eef_step
+                                        0.0)         # jump_threshold
+
+        # Note: We are just planning, not asking move_group to actually move the robot yet:
+        return plan, fraction
+
+
+    def display_trajectory(self, plan):
+
+        display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+        display_trajectory.trajectory_start = self.robot.get_current_state()
+        display_trajectory.trajectory.append(plan)
+        # Publish
+        self.display_trajectory_publisher.publish(display_trajectory)
+
+    
+    def execute_plan(self, plan):
+
+        self.group.execute(plan, wait=True)
+
+
+    def go_to_pose_goal(self):
+
+        pose_goal = geometry_msgs.msg.Pose()
+        pose_goal.orientation.w = 1.0
+        pose_goal.position.x = 0.4
+        pose_goal.position.y = 0.1
+        pose_goal.position.z = 0.4
+        self.group.set_pose_target(pose_goal)
+
+        ## Now, we call the planner to compute the plan and execute it.
+        plan = self.group.go(wait=True)
+        # Calling `stop()` ensures that there is no residual movement
+        self.group.stop()
+        # It is always good to clear your targets after planning with poses.
+        self.group.clear_pose_targets()
+
+

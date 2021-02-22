@@ -1,5 +1,9 @@
 online: Hi, how can we help?
 
+moveUp: Sure
+
 sleep: Ok, see you later
+
+home: I'm ready
 
 fallback: Hmm, I don't know that.

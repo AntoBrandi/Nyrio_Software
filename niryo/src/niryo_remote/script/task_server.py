@@ -26,7 +26,14 @@ class TaskServer(object):
 
         # start executing the action
         if goal.goal.isCartesian:
-            pass
+            if goal.goal.isAbsolutePose:
+                pass
+            else:
+                cartesian_plan, fraction = self._moveit.plan_cartesian_path(goal.goal.waypoints)
+                if goal.goal.isDisplay:
+                    self._moveit.display_trajectory(cartesian_plan)
+                if goal.goal.isExecute:
+                    self._moveit.execute_plan(cartesian_plan)
         else:
             self._moveit.go_to_joint_state(goal.goal.jointAngles)
 
