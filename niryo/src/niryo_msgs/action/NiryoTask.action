@@ -1,5 +1,5 @@
 #goal         
-int64 task_number
+niryo_msgs/NiryoGoal goal
 ---
 #result
 bool success

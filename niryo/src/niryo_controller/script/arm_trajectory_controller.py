@@ -5,7 +5,7 @@ import control_msgs.msg
 import math
 from std_msgs.msg import Int16MultiArray, Float64MultiArray
 from sensor_msgs.msg import JointState
-from niryo_controller.srv import AnglesConverter
+from niryo_msgs.srv import AnglesConverter
 
 
 # constant list of the joint names for the arm

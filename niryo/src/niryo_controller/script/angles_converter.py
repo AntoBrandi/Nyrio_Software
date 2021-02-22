@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import math
-from niryo_controller.srv import AnglesConverter, AnglesConverterResponse
+from niryo_msgs.srv import AnglesConverter, AnglesConverterResponse
 
 
 def convert_radians_to_steps(req):

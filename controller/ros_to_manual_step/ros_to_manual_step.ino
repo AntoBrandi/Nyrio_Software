@@ -1,14 +1,14 @@
 #include <ros.h>
 #include <std_msgs/Int16MultiArray.h>
 
-#define STEPPER_1_DIR 2
-#define STEPPER_1_STEP 3
+#define STEPPER_1_DIR 16
+#define STEPPER_1_STEP 17
 
-#define STEPPER_2_DIR 4
-#define STEPPER_2_STEP 5
+#define STEPPER_2_DIR 18
+#define STEPPER_2_STEP 19
 
-#define STEPPER_3_DIR 6
-#define STEPPER_3_STEP 7
+#define STEPPER_3_DIR 20
+#define STEPPER_3_STEP 21
 
 #define stepsPerRevolution 200
 
@@ -102,7 +102,7 @@ void loop()
             actual_position_stepper_3 +=increment_stepper_3;
         }
         
-        delayMicroseconds(500);
+        delayMicroseconds(1000);
 
 
         digitalWrite(STEPPER_1_STEP, LOW);
@@ -110,7 +110,7 @@ void loop()
         digitalWrite(STEPPER_3_STEP, LOW);
 
 
-        delayMicroseconds(500);   
+        delayMicroseconds(1000);   
     }
 
     // Keep ROS Node Up & Running

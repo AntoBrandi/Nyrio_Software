@@ -11,5 +11,8 @@
   
     <!-- Launch moveit rviz gui -->
     <include file="$(find niryo_moveit)/launch/moveit_rviz.launch"/>
+
+    <!-- Launch the remote interface with alexa -->
+    <include file="$(find niryo_remote)/launch/remote.launch"/>
   
 </launch>

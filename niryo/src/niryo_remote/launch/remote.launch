@@ -1,0 +1,11 @@
+<launch>
+
+    <!-- Launch the task action server -->
+    <node pkg="niryo_remote" type="task_server.py" name="task_server" respawn="true" output="screen">
+        <remap from="/joint_states" to="/niryo/joint_states" />
+    </node>
+
+    <!-- Launch the alexa web server interface -->
+    <node pkg="niryo_remote" type="alexa_interface.py" name="alexa_interface" respawn="true" output="screen"/>
+
+</launch>

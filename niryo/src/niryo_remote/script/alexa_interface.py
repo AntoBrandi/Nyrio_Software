@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 from flask import Flask, render_template
 from flask_ask import Ask, statement, question, session
-from niryo_remote.msg import NiryoTaskAction, NiryoTaskGoal
 import rospy
 import threading
-import actionlib
+from tasks import Wake, Sleep
 
 
 threading.Thread(target=lambda: rospy.init_node('alexa_interface', disable_signals=True)).start()
-client = actionlib.SimpleActionClient('task_server', NiryoTaskAction)
+
 
 app = Flask(__name__)
 ask = Ask(app, "/")
@@ -16,55 +15,28 @@ ask = Ask(app, "/")
 
 @ask.launch
 def launch():
-    # Function that gets called when the skill is activated
-    goal = NiryoTaskGoal(task_number=0)
-    client.send_goal(goal)
+    # wake the robot and bring it in the home position
+    task = Wake()
+    task.execute()
     msg = render_template('online')
     return question(msg)
 
 
-@ask.intent("DanceIntent")
-def dance():
-    # Function that is called when the Dance Intent is activated
-    goal = NiryoTaskGoal(task_number=1)
-    client.send_goal(goal)
-    msg = render_template('dance')
-    return statement(msg)
-
-
-@ask.intent("PickIntent")
-def pick():
-    # Function that is called when the Pick Intent is activated
-    goal = NiryoTaskGoal(task_number=2)
-    client.send_goal(goal)
-    msg = render_template('pick')
-    return statement(msg)
-
-
 @ask.intent("SleepIntent")
 def sleep():
-    # Function that is called when the Sleep Intent is activated
-    goal = NiryoTaskGoal(task_number=3)
-    client.send_goal(goal)
+    # sleep the robot and bring it in the release position
+    task = Sleep()
+    task.execute()
     msg = render_template('sleep')
-    return statement(msg)
-
-
-@ask.intent("WakeIntent")
-def sleep():
-    # Function that is called when the Wake Intent is activated
-    goal = NiryoTaskGoal(task_number=0)
-    client.send_goal(goal)
-    msg = render_template('wake')
     return statement(msg)
 
 
 @ask.intent("AMAZON.FallbackIntent")
 def fallback():
+    # unexpected action required
     fallback_msg = render_template('fallback')
     return statement(fallback_msg)
 
 
 if __name__ == '__main__':
-    client.wait_for_server()
     app.run()

@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   actionlib 
   actionlib_msgs
+  niryo_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -57,10 +58,10 @@ find_package(Boost REQUIRED COMPONENTS system)
 # )
 
 ## Generate services in the 'srv' folder
-add_service_files(
-  FILES
-  AnglesConverter.srv
-)
+# add_service_files(
+#   FILES
+#   AnglesConverter.srv
+# )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -108,7 +109,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES niryo_controller
-   CATKIN_DEPENDS roscpp rospy std_msgs actionlib_msgs
+   CATKIN_DEPENDS roscpp rospy std_msgs actionlib_msgs niryo_msgs
 #  DEPENDS system_lib
 )
 

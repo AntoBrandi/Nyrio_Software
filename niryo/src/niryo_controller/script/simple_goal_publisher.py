@@ -9,5 +9,5 @@ if __name__ == '__main__':
     pub = rospy.Publisher('niryo/stepper_actuate', Int16MultiArray, queue_size=10)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
-        pub.publish(data=[3000,3000,3000])
+        pub.publish(data=[0,0,0])
         rate.sleep()
